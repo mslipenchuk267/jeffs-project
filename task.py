@@ -12,7 +12,9 @@ itiDuration = 1
 decisionDuration = 5
 tryFasterDuration = 1
 trialType = [''] * len(numTrials) # 1 denotes money and machine selection game
-                                  # 2 denotes 2 machine selection game
+                                  # 2 denotes machine and machine selection game
+moneyTypes = [5,10,50]
+
 # Logging Data
 key = ['']
 responses = [''] * len(numTrials)
@@ -29,8 +31,10 @@ subj_id=subjDlg.data[0]
 if len(subj_id) < 1: # Make sure participant entered name
     core.quit()
 
-# Initialzing Window, insruction text, and thank you screen text, and money option text;
+# Initialzing Window
 win = visual.Window(fullscr=True, size=[1100, 800], units='pix', monitor='testMonitor', color = [-.9,-.9,-.9])
+
+# Initalize Text Stim
 instruction_screen = visual.TextStim(win, text="""To select the option presented on the left press ‘f’.\n
                                             To select the option presented on the right press ‘g’.\n
                                             You will have 6 seconds to make your choice.\n\n
@@ -51,11 +55,11 @@ win.flip()
 if 'escape' in event.waitKeys():
     core.quit()
 
-# Initialize image list
+# Populate imageList with slot machine images
 imageList = [os.path.join(directory, image) for image in
                  glob.glob('images/*.jpg')]
 
-# Randomize order of images
+# Initalize Image Stim
 leftMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
 rightMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
 
@@ -65,7 +69,7 @@ for i in range(0, numTrials):
     # Stretch can be mitigated by cropping images to a resolution that would
     # scale to the specified one bellow.
 
-    event.clearEvents()
+    event.clearEvents() # If participant presses key(s) during iti 
     timer.reset()
     while timer.getTime() < decisionDuration:
         if trialType[i] == 1:
@@ -81,6 +85,7 @@ for i in range(0, numTrials):
         key = event.waitKeys()
         if key[0] in ['f','g']:
             responses[i] = key[0]
+            break
         if 'escape' in event.waitKeys():
             core.quit()
 
