@@ -19,8 +19,8 @@ thankYouScreenDuration = 1.5
 numTrials = 10
 trialType = [''] * len(numTrials) # 1 denotes money and machine selection game
                                   # 2 denotes machine and machine selection game
-moneyTypes = [5,10,50]
-percentageTypes = [25, 50, 75]
+moneyTypes = ['$5','$10','$50']
+percentageTypes = ['25%', '50%', '75%', '??']
 
 # Data Logging
 key = ['']
@@ -29,6 +29,8 @@ leftMachineTypes = [''] * len(numTrials)
 rightMachineTypes = [''] * len(numTrials)
 leftMachinePercentages = [''] * len(numTrials)
 rightMachinePercentages = [''] * len(numTrials)
+leftMachineMoneyAmounts =[''] * len(numTrials)
+rightMachineMoneyAmounts = [''] * len(numTrials)
 moneyOptions = [''] * len(numTrials)
 
 # Get subjID
@@ -76,47 +78,43 @@ if 'escape' in event.waitKeys():
 
 # Main Loop
 for i in range(0, numTrials):
-    # Set trial parameters and log data
+    # Set stim parameters and log data
     if trialType[i] == 1:
         rightMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
         rightMachinePercentage = percentageTypes[[random.randint(0,len(percentageTypes)-1)]]
+        rightMachineMoneyAmount = moneyTypes[random.randint(0,len(moneyTypes)-1)]
         moneyOption = moneyTypes[random.randint(0,len(moneyTypes)-1)]
         moneyOptionChoice.setText(moneyOption)
-        moneyOptionRightMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
+        moneyOptionRightMachine.setText(rightMachineMoneyAmount)
         rightMachine.setImage(rightMachineImage)
         percentageRight.setText(rightMachinePercentage)
         leftMachineTypes[i] = 'n/a'
         rightMachineTypes[i] = rightMachineImage
         leftMachinePercentages[i] = 'n/a'
         rightMachinePercentages[i] = rightMachinePercentage
+        leftMachineMoneyAmounts = 'n/a'
+        rightMachineMoneyAmounts = rightMachineMoneyAmount
         moneyOptions[i] = moneyOption
     else:
+        leftMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
+        rightMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
         moneyOptionLeftMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
         moneyOptionRightMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-        leftMachine.setImage(imageList[[random.randint(0,len(imageList)-1)]])
-        rightMachine.setImage(imageList[[random.randint(0,len(imageList)-1)]])
+        leftMachine.setImage(leftMachineImage)
+        rightMachine.setImage(rightMachineImage)
         percentageLeft.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
         percentageRight.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
 
     event.clearEvents() # If participant presses key(s) during iti
     timer.reset()
     while timer.getTime() < decisionDuration:
+        # Draw Image and Text Stim
         if trialType[i] == 1:
-            moneyOptionChoice.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-            moneyOptionRightMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-            rightMachine.setImage(imageList[[random.randint(0,len(imageList)-1)]])
-            percentageRight.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
             moneyOptionChoice.draw()
             moneyOptionRightMachine.draw()
             rightMachine.draw()
             percentageRight.draw()
         else:
-            moneyOptionLeftMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-            moneyOptionRightMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-            leftMachine.setImage(imageList[[random.randint(0,len(imageList)-1)]])
-            rightMachine.setImage(imageList[[random.randint(0,len(imageList)-1)]])
-            percentageLeft.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
-            percentageRight.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
             moneyOptionLeftMachine.draw()
             leftMachine.draw()
             percentageLeft.draw()
@@ -124,20 +122,13 @@ for i in range(0, numTrials):
             rightMachine.draw()
             percentageRight.draw()
 
-        # Detect Subject's key press and reference value with key
+        # Detect Subject's key press and reference value with var key
         key = event.waitKeys()
         if key[0] in ['f','g']:
             responses[i] = key[0]
-            break # Ends trial before specified decisionDuration
+            break # Ends trial before decisionDuration, starts new trial
         if 'escape' in event.waitKeys(): # Allows subject to leave game
             core.quit()
-
-    if trialType[i] = 1:
-        leftMachineTypes = 'n/a'
-        leftMachinePercentages = 'n/a'
-
-    else:
-        moneyOptions = 'n/a'
 
     if responses[i] = '':
         responses[i] = 'n/a'
@@ -152,11 +143,12 @@ for i in range(0, numTrials):
 
 # Write to .csv file with participants name, subj_id, in file name
 f=open( subj_id + ' results.csv','w')
-f.write('Trial Type, Response\n')
+f.write('Trial Type, Left Machine Image, Right Machine Image, Left Machine Percentage, Right Machine Percentage, Left Machine $, Right Machine $, Response\n')
 for i in range(0, numTrials):
     f.write(trialType[i] + ',' + leftMachineTypes[i]  + ',' + rightMachineTypes[i] + ','
-        + leftMachinePercentages[i] + ',' + rightMachinePercentages[i] + ',' + moneyOptions[i]
-        + ',' + responses[i] + '\n')
+        + leftMachinePercentages[i] + ',' + rightMachinePercentages[i] + ','
+        + leftMachineMoneyAmounts[i] + ',' + rightMachineMoneyAmounts[i] + ','
+        + moneyOptions[i] + ',' + responses[i] + '\n')
 f.close()
 
 # Thank participant
