@@ -77,7 +77,7 @@ for i in range(0, numTrials):
             leftMachine.draw()
             moneyOptionRightMachine.draw()
             rightMachine.draw()
-            
+
         key = event.waitKeys()
         if key[0] in ['f','g']:
             responses[i] = key[0]
@@ -100,10 +100,8 @@ for i in range(0, numTrials):
 
 # Write to .csv file with participants name, subj_id, in file name
 f=open( subj_id + ' task a results.csv','w')
-for i in range(0,len(imageList)):
-    # Remove filepath from imageList[i] string
-    picName = os.path.relpath(imageList[i], '..\..\JOCN\task a\images\\') #..\..\JOCN\task a\images\
-    f.write(picName +','+ratings[i]+','+familiarity[i]+"\n")
+for i in range(0, numTrials):
+    f.write(trialType[i] + ',' + responses[i] + "\n")
 f.close()
 
 # Thank participant
