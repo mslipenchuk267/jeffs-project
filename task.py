@@ -20,6 +20,7 @@ numTrials = 10
 trialType = [''] * len(numTrials) # 1 denotes money and machine selection game
                                   # 2 denotes machine and machine selection game
 moneyTypes = [5,10,50]
+percentageTypes = [25, 50, 75]
 
 # Data Logging
 key = ['']
@@ -48,6 +49,8 @@ iti = visual.TextStim(win, text="""*""")
 moneyOptionChoice = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionLeftMachine = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionRightMachine = visual.TextStim(win, text=moneyOptions[0])
+percentageLeft = visual.TextStim(win, text=percentageTypes[0])
+percentageRight = visual.TextStim(win, text=percentageTypes[0])
 
 # Populate imageList with slot machine images
 imageList = [os.path.join(directory, image) for image in
@@ -75,11 +78,14 @@ for i in range(0, numTrials):
             moneyOptionChoice.draw()
             moneyOptionRightMachine.draw()
             rightMachine.draw()
+            percentageRight.draw()
         else:
             moneyOptionLeftMachine.draw()
             leftMachine.draw()
+            percentageLeft.draw()
             moneyOptionRightMachine.draw()
             rightMachine.draw()
+            percentageRight.draw()
 
         key = event.waitKeys()
         if key[0] in ['f','g']:
@@ -103,7 +109,9 @@ for i in range(0, numTrials):
 f=open( subj_id + ' results.csv','w')
 f.write('Trial Type, Response\n')
 for i in range(0, numTrials):
-    f.write(trialType[i] + ',' + responses[i] + '\n')
+    f.write(trialType[i] + ',' + leftMachine[i]  + ',' + rightMachine[i] + ','
+        + percentageLeft[i] + ',' + percentageRight[i] + ',' + moneyOptionChoice[i]
+        + ',' + responses[i] + '\n')
 f.close()
 
 # Thank participant
