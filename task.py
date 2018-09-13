@@ -31,11 +31,12 @@ if len(subj_id)<1: # Make sure participant entered name
 win = visual.Window(fullscr=True, size=[1100, 800], units='pix', monitor='testMonitor', color = [-.9,-.9,-.9])
 instruction_screen = visual.TextStim(win, text="""To select the option presented on the left press ‘f’.\n
                                             To select the option presented on the right press ‘g’.\n
-                                            You will have 6 seconds to make your choice.\n
-                                            \n Press any key to start""")
-thank_you_screen = visual.TextStim(win, text="""Thank you for choosing!""")
-moneyOption = visual.TextStim(win, text=moneyOptions[0])
-moneyOption = visual.TextStim(win, text=moneyOptions[0])
+                                            You will have 6 seconds to make your choice.\n\n
+                                            Press any key to start""")
+thank_you_screen = visual.TextStim(win, text="""Thank you for playing!""")
+moneyOptionChoice = visual.TextStim(win, text=moneyOptions[0])
+moneyOptionLeftMachine = visual.TextStim(win, text=moneyOptions[0])
+moneyOptionRightMachine = visual.TextStim(win, text=moneyOptions[0])
 
 # Show instruction screen
 event.clearEvents()
@@ -49,28 +50,30 @@ if 'escape' in event.waitKeys():
 # Initialize image list
 imageList = [os.path.join(directory, image) for image in
                  glob.glob('images/*.jpg')]
+
 # Randomize order of images
-leftMachine = visual.ImageStim(win=win, image=image, units='pix', pos=[0, 200], size = [300,300])
-rightMachine = visual.ImageStim(win=win, image=image, units='pix', pos=[0, 200], size = [300,300])
+leftMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
+rightMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
 
 # Main Loop
 for i in range(0, numTrials):
     # The size parameter rescales images.
-    # Stretch can be mitigated by cropping images to a resolution that would scale to the specified one bellow.
-    
+    # Stretch can be mitigated by cropping images to a resolution that would
+    # scale to the specified one bellow.
+
     event.clearEvents()
     timer.reset()
     while key[0] not in ['escape', 'esc'] and timer.getTime() < decisionDuration:
         if trialType[i] == 1:
-            
+            responses[i] = key[0] 
         key = event.waitKeys()
-        if event.getKeys(['escape']):
-            core.quit()
+        if key[0] in ['f','g']:
+
 
     # assigns response to corresponding image
     responses[imageList.index(image)] = ratingScale.getRating()
     familiarity[imageList.index(image)] = familiarityScale.getRating()
-    
+
     win.flip()
     core.wait(itiDuration)  # brief pause, slightly smoother for the subject
 
