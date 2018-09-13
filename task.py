@@ -7,10 +7,12 @@ import datetime
 import random
 
 # Path to working directory
-numTrials = 10;
-itiDuration = 1;
-decisionDuration = 5;
-trialType = [''] * len(numTrials)
+numTrials = 10
+itiDuration = 1
+decisionDuration = 5
+tryFasterDuration = 1
+trialType = [''] * len(numTrials) # 1 denotes money and machine selection game
+                                  # 2 denotes 2 machine selection game
 # Logging Data
 key = ['']
 responses = [''] * len(numTrials)
@@ -19,12 +21,12 @@ responses = [''] * len(numTrials)
 directory = os.getcwd()
 
 # Get subjID
-subjDlg=gui.Dlg(title="JOCN paper- rate items")
+subjDlg = gui.Dlg(title="JOCN paper - rate items")
 subjDlg.addField('Enter Subject ID: ')
 subjDlg.show()
 subj_id=subjDlg.data[0]
 
-if len(subj_id)<1: # Make sure participant entered name
+if len(subj_id) < 1: # Make sure participant entered name
     core.quit()
 
 # Initialzing Window, insruction text, and thank you screen text, and money option text;
@@ -34,6 +36,8 @@ instruction_screen = visual.TextStim(win, text="""To select the option presented
                                             You will have 6 seconds to make your choice.\n\n
                                             Press any key to start""")
 thank_you_screen = visual.TextStim(win, text="""Thank you for playing!""")
+try_faster_screen = visual.TextStim(win, text='Please make a faster decision next round!')
+iti = visual.TextStim(win, text="""*""")
 moneyOptionChoice = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionLeftMachine = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionRightMachine = visual.TextStim(win, text=moneyOptions[0])
@@ -63,17 +67,32 @@ for i in range(0, numTrials):
 
     event.clearEvents()
     timer.reset()
-    while key[0] not in ['escape', 'esc'] and timer.getTime() < decisionDuration:
+    while timer.getTime() < decisionDuration:
         if trialType[i] == 1:
-            responses[i] = key[0] 
+            moneyOptionChoice.draw()
+            moneyOptionRightMachine.draw()
+            rightMachine.draw()
+        else:
+            moneyOptionLeftMachine.draw()
+            leftMachine.draw()
+            moneyOptionRightMachine.draw()
+            rightMachine.draw()
+            
         key = event.waitKeys()
         if key[0] in ['f','g']:
+            responses[i] = key[0]
+        if 'escape' in event.waitKeys():
+            core.quit()
 
+    if responses[i] = '':
+        responses[i] = 'n/a'
+        event.clearEvents()
+        try_faster_screen.draw()
+        win.flip()
+        core.wait(tryFasterDuration)
+        continue
 
-    # assigns response to corresponding image
-    responses[imageList.index(image)] = ratingScale.getRating()
-    familiarity[imageList.index(image)] = familiarityScale.getRating()
-
+    iti.draw()
     win.flip()
     core.wait(itiDuration)  # brief pause, slightly smoother for the subject
 
