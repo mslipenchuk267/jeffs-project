@@ -101,8 +101,9 @@ for i in range(0, numTrials):
 
 # Write to .csv file with participants name, subj_id, in file name
 f=open( subj_id + ' results.csv','w')
+f.write('Trial Type, Response\n')
 for i in range(0, numTrials):
-    f.write(trialType[i] + ',' + responses[i] + "\n")
+    f.write(trialType[i] + ',' + responses[i] + '\n')
 f.close()
 
 # Thank participant
