@@ -7,20 +7,23 @@ import datetime
 import random
 
 # Path to working directory
-numTrials = 10
+directory = os.getcwd()
+
+# Timings
 itiDuration = 1
 decisionDuration = 5
 tryFasterDuration = 1
+thankYouScreenDuration = 1.5
+
+# Trial data initlization
+numTrials = 10
 trialType = [''] * len(numTrials) # 1 denotes money and machine selection game
                                   # 2 denotes machine and machine selection game
 moneyTypes = [5,10,50]
 
-# Logging Data
+# Data Logging
 key = ['']
 responses = [''] * len(numTrials)
-
-
-directory = os.getcwd()
 
 # Get subjID
 subjDlg = gui.Dlg(title="JOCN paper - rate items")
@@ -32,7 +35,7 @@ if len(subj_id) < 1: # Make sure participant entered name
     core.quit()
 
 # Initialzing Window
-win = visual.Window(fullscr=True, size=[1100, 800], units='pix', monitor='testMonitor', color = [-.9,-.9,-.9])
+win = visual.Window(fullscr=True, size=[1200, 800], units='pix', monitor='testMonitor', color = [-.9,-.9,-.9])
 
 # Initalize Text Stim
 instruction_screen = visual.TextStim(win, text="""To select the option presented on the left press ‘f’.\n
@@ -46,6 +49,14 @@ moneyOptionChoice = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionLeftMachine = visual.TextStim(win, text=moneyOptions[0])
 moneyOptionRightMachine = visual.TextStim(win, text=moneyOptions[0])
 
+# Populate imageList with slot machine images
+imageList = [os.path.join(directory, image) for image in
+                 glob.glob('images/*.jpg')]
+
+# Initalize Image Stim
+leftMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
+rightMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
+
 # Show instruction screen
 event.clearEvents()
 instruction_screen.draw()
@@ -55,21 +66,9 @@ win.flip()
 if 'escape' in event.waitKeys():
     core.quit()
 
-# Populate imageList with slot machine images
-imageList = [os.path.join(directory, image) for image in
-                 glob.glob('images/*.jpg')]
-
-# Initalize Image Stim
-leftMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
-rightMachine = visual.ImageStim(win=win, image=image[0], units='pix', pos=[0, 200], size = [300,300])
-
 # Main Loop
 for i in range(0, numTrials):
-    # The size parameter rescales images.
-    # Stretch can be mitigated by cropping images to a resolution that would
-    # scale to the specified one bellow.
-
-    event.clearEvents() # If participant presses key(s) during iti 
+    event.clearEvents() # If participant presses key(s) during iti
     timer.reset()
     while timer.getTime() < decisionDuration:
         if trialType[i] == 1:
@@ -85,8 +84,8 @@ for i in range(0, numTrials):
         key = event.waitKeys()
         if key[0] in ['f','g']:
             responses[i] = key[0]
-            break
-        if 'escape' in event.waitKeys():
+            break # Ends trial before specified decisionDuration
+        if 'escape' in event.waitKeys(): # Allows subject to leave game
             core.quit()
 
     if responses[i] = '':
@@ -95,16 +94,13 @@ for i in range(0, numTrials):
         try_faster_screen.draw()
         win.flip()
         core.wait(tryFasterDuration)
-        continue
 
     iti.draw()
     win.flip()
     core.wait(itiDuration)  # brief pause, slightly smoother for the subject
 
-
-
 # Write to .csv file with participants name, subj_id, in file name
-f=open( subj_id + ' task a results.csv','w')
+f=open( subj_id + ' results.csv','w')
 for i in range(0, numTrials):
     f.write(trialType[i] + ',' + responses[i] + "\n")
 f.close()
@@ -112,4 +108,4 @@ f.close()
 # Thank participant
 thank_you_screen.draw()
 win.flip()
-core.wait(1.5)
+core.wait(thankYouScreenDuration)
