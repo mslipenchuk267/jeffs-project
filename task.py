@@ -25,13 +25,13 @@ percentageTypes = ['25%', '50%', '75%', '??']
 # Data Logging
 key = ['']
 responses = [''] * len(numTrials)
-leftMachineTypes = [''] * len(numTrials)
+leftMachineTypes = [''] * len(numTrials) # Image names
 rightMachineTypes = [''] * len(numTrials)
-leftMachinePercentages = [''] * len(numTrials)
+leftMachinePercentages = [''] * len(numTrials) # Percentages displayed in machine
 rightMachinePercentages = [''] * len(numTrials)
-leftMachineMoneyAmounts =[''] * len(numTrials)
+leftMachineMoneyAmounts =[''] * len(numTrials) # Money Amount offered above machines
 rightMachineMoneyAmounts = [''] * len(numTrials)
-moneyOptions = [''] * len(numTrials)
+moneyOptions = [''] * len(numTrials) # Money option on the left
 
 # Get subjID
 subjDlg = gui.Dlg(title="JOCN paper - rate items")
@@ -79,7 +79,7 @@ if 'escape' in event.waitKeys():
 # Main Loop
 for i in range(0, numTrials):
     # Set stim parameters and log data
-    if trialType[i] == 1:
+    if trialType[i] == 1: # 1 indicates money option and slot machine game
         rightMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
         rightMachinePercentage = percentageTypes[[random.randint(0,len(percentageTypes)-1)]]
         rightMachineMoneyAmount = moneyTypes[random.randint(0,len(moneyTypes)-1)]
@@ -95,20 +95,31 @@ for i in range(0, numTrials):
         leftMachineMoneyAmounts = 'n/a'
         rightMachineMoneyAmounts = rightMachineMoneyAmount
         moneyOptions[i] = moneyOption
-    else:
+    else: # slot machine and slot machine game
         leftMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
         rightMachineImage = imageList[[random.randint(0,len(imageList)-1)]]
-        moneyOptionLeftMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
-        moneyOptionRightMachine.setText(moneyTypes[random.randint(0,len(moneyTypes)-1)])
+        leftMachineMoneyAmount = moneyTypes[random.randint(0,len(moneyTypes)-1)]
+        rightMachineMoneyAmount = moneyTypes[random.randint(0,len(moneyTypes)-1)]
+        leftMachinePercentage = percentageTypes[random.randint(0,len(percentageTypes)-1)]
+        rightMachinePercentage = percentageTypes[random.randint(0,len(percentageTypes)-1)]
+        moneyOptionLeftMachine.setText(leftMachineMoneyAmount)
+        moneyOptionRightMachine.setText(rightMachineMoneyAmount)
         leftMachine.setImage(leftMachineImage)
         rightMachine.setImage(rightMachineImage)
-        percentageLeft.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
-        percentageRight.setText(percentageTypes[[random.randint(0,len(percentageTypes)-1)]])
+        percentageLeft.setText(leftMachinePercentage)
+        percentageRight.setText(rightMachinePercentage)
+        leftMachineTypes[i] = leftMachineImage
+        rightMachineTypes[i] = rightMachineImage
+        leftMachinePercentages[i] = leftMachinePercentage
+        rightMachinePercentages[i] = rightMachinePercentage
+        leftMachineMoneyAmounts = leftMachineMoneyAmount
+        rightMachineMoneyAmounts = rightMachineMoneyAmount
+        moneyOptions[i] = 'n/a'
 
     event.clearEvents() # If participant presses key(s) during iti
     timer.reset()
     while timer.getTime() < decisionDuration:
-        # Draw Image and Text Stim
+        # Draw Image and Text Stim respective to trial type
         if trialType[i] == 1:
             moneyOptionChoice.draw()
             moneyOptionRightMachine.draw()
